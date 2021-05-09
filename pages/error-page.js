@@ -1,7 +1,8 @@
 import { connectToDatabase } from '../utils/mongodb'
 import {Col, Container, Row} from "react-bootstrap";
 import React from "react";
-import Cookies from 'universal-cookie';
+import Modal from 'react-modal';
+
 
 export default class Home extends React.Component {
 
@@ -10,10 +11,7 @@ export default class Home extends React.Component {
         let moonUnitPrice = props.moon.reduce(function(prev, curr) {
             return prev.unitPrice < curr.unitPrice ? prev : curr;
         }).unitPrice;
-        const cookies = new Cookies();
-        cookies.set('user_id', cookies.get('user_id') || this.uuidv4(), { path: '/' });
         this.state = {
-            userId: cookies.get('user_id'),
             modalIsOpen: false,
             setIsOpen: false,
             page: 'buy',
@@ -26,42 +24,8 @@ export default class Home extends React.Component {
         console.log(props)
     }
 
-    uuidv4() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
-
-
-    handleChange(event) {
-        this.setState({[event.target.name]: event.target.value})
-        this.resolveCalculate(event.target.name, event.target.value)
-    }
-
-    handleChangePage(page) {
-        if(page === 'history') {
-            this.requestMoonHistory().then(history =>
-                this.setState({page, history})
-            )
-        } else {
-            this.setState({page})
-        }
-    }
-
-    resolveCalculate(name, value) {
-        if(name === "inputTHBT") this.setState({inputMoon: value/this.state.moonUnitPrice})
-        else if(name === "inputMoon") this.setState({inputTHBT: value*this.state.moonUnitPrice})
-    }
-
-    async requestMoonHistory() {
-        return await fetch("/api/getHistory")
-            .then(response => response.json())
-    }
-
     requestBuyMoon() {
         let request = {
-            userId: this.state.userId,
             inputMoon: this.state.inputMoon,
             inputTHBT: this.state.inputTHBT,
             inputTolerance: this.state.inputTolerance
@@ -78,8 +42,9 @@ export default class Home extends React.Component {
                 <Row className="container-row">
                     <Col md={3}>
                         <div>
+                            <img src="https://image.ibb.co/kUASdV/contact-image.png" alt="image"/>
                             <h2><a href="#buy" name="page" onClick={() => this.handleChangePage('buy')}>Buy</a></h2>
-                            <h2><a href="#history" name="page" onClick={() => this.handleChangePage('history')}>History</a></h2>
+                            <h2><a href="#buy" name="page" onClick={() => this.handleChangePage('history')}>History</a></h2>
                         </div>
                     </Col>
                     {this.state.page === 'buy' ? <Col md={9}>
@@ -123,26 +88,6 @@ export default class Home extends React.Component {
                         :
                         <Col md={9}>
                             <div className="contact-form">
-                                <table>
-                                    <tr>
-                                        <th>Date and time</th>
-                                        <th>ID</th>
-                                        <th>THBT</th>
-                                        <th>MOON</th>
-                                        <th>RATE</th>
-                                    </tr>
-                                    {
-                                        this.state.history.map((r) => {
-                                            return (<tr>
-                                                <td>{r.user_id}</td>
-                                                <td>{r.date}</td>
-                                                <td>{r.price}</td>
-                                                <td>{r.moon}</td>
-                                                <td>1 MOON = {r.price} | {1/(r.price)}</td>
-                                            </tr>)
-                                        })
-                                    }
-                                </table>
                             </div>
                         </Col>
                         }
@@ -202,21 +147,4 @@ export default class Home extends React.Component {
         )
     }
 
-}
-
-export async function getServerSideProps(context) {
-    const { client, db} = await connectToDatabase()
-
-    let moon =  await db.collection("moon-coin").find({amount: { $ne: 0 }})
-       .sort({ unitPrice: 1 })
-       .limit(1)
-       .toArray()
-    console.log(moon)
-    moon = JSON.parse(JSON.stringify(moon))
-
-  const isConnected = await client.isConnected()
-
-  return {
-    props: { isConnected, moon },
-  }
 }

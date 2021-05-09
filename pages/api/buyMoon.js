@@ -1,7 +1,7 @@
 import { connectToDatabase } from '../../utils/mongodb'
 
 export default async (req, res) => {
-  if (req.method === 'GET') {
+  if (req.method === 'POST') {
     const {db} = await connectToDatabase()
 
     let availableMoon = await db.collection("moon-coin").find({})
@@ -9,11 +9,14 @@ export default async (req, res) => {
         .toArray()
 
     let updatedMoon = []
-    let moon = 110
-    let inputPrice = 100
-    let inputTolerance = 5
+    const body = JSON.parse(req.body)
+    let inputMoon = body.inputMoon
+    let inputPrice = body.inputTHBT
+    let inputTolerance = body.inputTolerance
+    console.log(req.body)
+
     let price = 0
-    for (let i = 0, moonNeeded = moon; moonNeeded > 0; i++) {
+    for (let i = 0, moonNeeded = inputMoon; moonNeeded > 0; i++) {
       if(availableMoon[i].amount > 0) {
         console.log(availableMoon[i].unitPrice)
         if(availableMoon[i].amount > moonNeeded) {
@@ -28,8 +31,11 @@ export default async (req, res) => {
         updatedMoon.push(availableMoon[i])
       }
     }
-    if(price > inputPrice* (100*inputTolerance)) {
-      //res.status(200).json({name: 'John Doe'})
+    console.log('o', price)
+    console.log('o', price)
+    if(price > inputPrice +  (inputPrice * 100 * inputTolerance)) {
+      res.status(400).json({name: 'John Doaaaae'})
+      return
     }
 
     for (const m of updatedMoon) {
@@ -37,7 +43,18 @@ export default async (req, res) => {
         console.log("Record added as " + records);
       });
     }
+    const today = new Date()
+
+    db.collection("history").insert({
+      user_id: body.userId,
+      date: today.getFullYear()+'-'+(today.getMonth()+1)+'-'+(today.getDate()) + ' ' + (today.getHours()) + ':' + (today.getMinutes()),
+      price: price,
+      moon: inputMoon
+    }, {}, function (err, records) {
+      console.log("Record added as " + records);
+    });
+
     console.log(updatedMoon)
-    res.status(200).json({name: 'John Doe'})
+    res.status(200).json({price:price, moon: inputMoon})
   }
 }
