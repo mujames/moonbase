@@ -39,3 +39,10 @@ http://localhost:3000/api/addMoon?amount=450&initPrice=2&riseEvery=100
 - initPrice -> initial price
 - riseEvery -> rise 10% every base moon amount
 
+
+## Run a unit test
+
+```
+npm run test
+```
+

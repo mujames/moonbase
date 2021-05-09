@@ -59,6 +59,19 @@ export default class Home extends React.Component {
             .then(response => response.json())
     }
 
+    componentWillMount(){
+        setInterval(() => {
+            fetch('/api/getMin')
+                .then(res => res.json())
+                .then(json => {
+                    let moonUnitPrice = json.length ? json.reduce(function(prev, curr) {
+                        return prev.unitPrice < curr.unitPrice ? prev : curr;
+                    }).unitPrice : null;
+                    this.setState({moonUnitPrice: moonUnitPrice})
+                });
+        }, 2500);
+    }
+
     requestBuyMoon() {
         let request = {
             userId: this.state.userId,
