@@ -5,6 +5,7 @@ This is a cryptocurrency exchange website called "MoonBase."
 First, for run the development server:
 
 ```bash
+npm install
 npm run dev
 ```
 
@@ -46,3 +47,8 @@ http://localhost:3000/api/addMoon?amount=450&initPrice=2&riseEvery=100
 npm run test
 ```
 
+## Automated
+
+```
+can't finish on time
+```

@@ -6,11 +6,8 @@ export function calculateMoon(availableMoon, inputMoon){
     let price = 0
     let updatedList = []
     let moonNeeded = inputMoon
-    console.log(moonNeeded,  availableMoon.length )
     for (let i = 0; moonNeeded > 0 && i < availableMoon.length ; i++) {
-        console.log(i,  availableMoon.length)
         if(availableMoon[i].amount > 0) {
-            console.log(availableMoon[i].unitPrice)
             if(availableMoon[i].amount > moonNeeded) {
                 price = price + moonNeeded * availableMoon[i].unitPrice
                 availableMoon[i].amount = availableMoon[i].amount - moonNeeded

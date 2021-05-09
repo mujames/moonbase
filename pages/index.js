@@ -23,7 +23,6 @@ export default class Home extends React.Component {
             inputMoon: 0,
             inputTolerance: 0
         }
-        console.log(props)
     }
 
     uuidv4() {
@@ -87,7 +86,6 @@ export default class Home extends React.Component {
                 window.location.href = "/success?moon=" + result.moon + "&thb=" + result.price;
             })
             .catch(error => {
-                console.log('eeee' + error)
                 window.location.href = "/error?message=" + error;
             });
     }
@@ -240,7 +238,6 @@ export async function getServerSideProps(context) {
        .sort({ unitPrice: 1 })
        .limit(1)
        .toArray()
-    console.log(moon)
     moon = JSON.parse(JSON.stringify(moon))
 
   const isConnected = await client.isConnected()

@@ -14,7 +14,6 @@ export default async (req, res) => {
     let inputPrice = body.inputTHBT
     let userTHBT = body.userTHBT
     let inputTolerance = body.inputTolerance
-    console.log(req.body)
 
     const calculateResult = calculateMoon(availableMoon, inputMoon)
 
@@ -28,7 +27,6 @@ export default async (req, res) => {
 
     for (const m of calculateResult.updatedList) {
       db.collection("moon-coin").update({_id: m._id}, m, {}, function (err, records) {
-        console.log("Record added as " + records);
       });
     }
 
@@ -38,7 +36,6 @@ export default async (req, res) => {
       price: calculateResult.price,
       moon: inputMoon
     }, {}, function (err, records) {
-      console.log("Record added as " + records);
     });
 
     res.status(200).json({price:calculateResult.price, moon: inputMoon})

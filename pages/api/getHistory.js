@@ -6,7 +6,6 @@ export default async (req, res) => {
     let moon =  await db.collection("history").find({})
         .sort({ date: -1 })
         .toArray()
-    console.log(moon)
 
     res.status(200).json(JSON.parse(JSON.stringify(moon)))
   }

@@ -12,7 +12,6 @@ export default class Success extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log(this.props)
     }
 
     backToHome() {
@@ -20,7 +19,6 @@ export default class Success extends React.Component {
     }
 
     render() {
-        console.log(this.props)
         return (
             <div>
             <Container fluid className="container contact">
