@@ -12,6 +12,7 @@ export default async (req, res) => {
     const body = JSON.parse(req.body)
     let inputMoon = body.inputMoon
     let inputPrice = body.inputTHBT
+    let userTHBT = body.userTHBT
     let inputTolerance = body.inputTolerance
     console.log(req.body)
 
@@ -31,10 +32,13 @@ export default async (req, res) => {
         updatedMoon.push(availableMoon[i])
       }
     }
-    console.log('o', price)
-    console.log('o', price)
+    console.log('a', updatedMoon, price)
+
     if(price > inputPrice +  (inputPrice * 100 * inputTolerance)) {
-      res.status(400).json({name: 'John Doaaaae'})
+      res.status(400).json({error: 'Actual price exceed tolerance.'})
+      return
+    } else if(userTHBT < price) {
+      res.status(400).json({error: 'User doesn\'t have enough THBT'})
       return
     }
 
@@ -54,7 +58,6 @@ export default async (req, res) => {
       console.log("Record added as " + records);
     });
 
-    console.log(updatedMoon)
     res.status(200).json({price:price, moon: inputMoon})
   }
 }

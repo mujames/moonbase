@@ -64,11 +64,19 @@ export default class Home extends React.Component {
             userId: this.state.userId,
             inputMoon: this.state.inputMoon,
             inputTHBT: this.state.inputTHBT,
-            inputTolerance: this.state.inputTolerance
+            inputTolerance: this.state.inputTolerance,
+            userTHBT: this.state.userCurrentBath
         }
         fetch("/api/buyMoon", {method: 'POST', body: JSON.stringify(request)})
             .then(response => response.json())
-            .then(data => console.log(data));
+            .then(result => {
+                if(result.error) throw Error(result.error)
+                window.location.href = "/success?moon=" + result.moon + "&thb=" + result.price;
+            })
+            .catch(error => {
+                console.log('eeee' + error)
+                window.location.href = "/error?message=" + error;
+            });
     }
 
     render() {
@@ -154,6 +162,7 @@ export default class Home extends React.Component {
         }
         .container-row {
             width: 100%;
+            max-height: 90vh;
         }
         .contact{
         padding: 4%;
