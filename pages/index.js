@@ -7,9 +7,9 @@ export default class Home extends React.Component {
 
     constructor(props) {
         super(props);
-        let moonUnitPrice = props.moon.reduce(function(prev, curr) {
+        let moonUnitPrice = props.moon.length ? props.moon.reduce(function(prev, curr) {
             return prev.unitPrice < curr.unitPrice ? prev : curr;
-        }).unitPrice;
+        }).unitPrice : null;
         const cookies = new Cookies();
         cookies.set('user_id', cookies.get('user_id') || this.uuidv4(), { path: '/' });
         this.state = {
@@ -27,7 +27,7 @@ export default class Home extends React.Component {
     }
 
     uuidv4() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        return 'xxxxxxxx-xxxx'.replace(/[xy]/g, function(c) {
             var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
@@ -91,43 +91,51 @@ export default class Home extends React.Component {
                         </div>
                     </Col>
                     {this.state.page === 'buy' ? <Col md={9}>
-                        <div className="contact-form">
-                            <div className="form-group">
-                                <label className="control-label col-sm-12">Moon = {this.state.moonUnitPrice} THBT</label>
-                                <label className="control-label col-sm-12">You have {this.state.userCurrentBath} THBT</label>
-                            </div>
-                        </div>
-                         <div className="contact-form">
-                            <div className="form-group">
-                                <label className="control-label col-sm-12">Amount to buy (THBT)</label>
-                                <div className="col-sm-10">
-                                    <input className="form-control" id="inputTHBT" name="inputTHBT"
-                                           value={this.state.inputTHBT} onChange={this.handleChange.bind(this)}/>
+                        {!this.state.moonUnitPrice ? <div className="contact-form">
+                                <div className="form-group">
+                                    <h4 className="control-label col-sm-12">No Moon left to sell....</h4>
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label className="control-label col-sm-12">Amount MOON</label>
-                                <div className="col-sm-10">
-                                    <input className="form-control" id="inputMoon" name="inputMoon"
-                                           value={this.state.inputMoon} onChange={this.handleChange.bind(this)}/>
+                            :
+                            <div>
+                                <div className="contact-form">
+                                    <div className="form-group">
+                                        <label className="control-label col-sm-12">Moon = {this.state.moonUnitPrice} THBT</label>
+                                        <label className="control-label col-sm-12">You have {this.state.userCurrentBath} THBT</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="form-group">
-                                <label className="control-label col-sm-12">Slippage Tolerance (%)</label>
-                                <div className="col-sm-10">
-                                    <input className="form-control" id="inputTolerance" name="inputTolerance"
-                                           value={this.state.inputTolerance} onChange={this.handleChange.bind(this)}/>
+                                 <div className="contact-form">
+                                    <div className="form-group">
+                                        <label className="control-label col-sm-12">Amount to buy (THBT)</label>
+                                        <div className="col-sm-10">
+                                            <input className="form-control" id="inputTHBT" name="inputTHBT"
+                                                   value={this.state.inputTHBT} onChange={this.handleChange.bind(this)}/>
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="control-label col-sm-12">Amount MOON</label>
+                                        <div className="col-sm-10">
+                                            <input className="form-control" id="inputMoon" name="inputMoon"
+                                                   value={this.state.inputMoon} onChange={this.handleChange.bind(this)}/>
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="control-label col-sm-12">Slippage Tolerance (%)</label>
+                                        <div className="col-sm-10">
+                                            <input className="form-control" id="inputTolerance" name="inputTolerance"
+                                                   value={this.state.inputTolerance} onChange={this.handleChange.bind(this)}/>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div className="form-group">
+                                        <div className="col-sm-offset-2 col-sm-10">
+                                            <button className="btn btn-default" onClick={this.requestBuyMoon.bind(this)}>Buy
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <br/>
-                            <div className="form-group">
-                                <div className="col-sm-offset-2 col-sm-10">
-                                    <button className="btn btn-default" onClick={this.requestBuyMoon.bind(this)}>Buy
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        </Col>
+                            </div>}
+                            </Col>
                         :
                         <Col md={9}>
                             <div className="contact-form">
@@ -146,7 +154,7 @@ export default class Home extends React.Component {
                                                 <td>{r.date}</td>
                                                 <td>{r.price}</td>
                                                 <td>{r.moon}</td>
-                                                <td>1 MOON = {r.price} | {1/(r.price)}</td>
+                                                <td>1 MOON = {r.price} | {r.moon/r.price}</td>
                                             </tr>)
                                         })
                                     }
@@ -154,7 +162,6 @@ export default class Home extends React.Component {
                             </div>
                         </Col>
                         }
-
                 </Row>
                 <style>{`
         body{

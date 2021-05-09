@@ -1,20 +1,25 @@
 version: "3.6"
+
 services:
-#  nextjs:
-#    ports:
-#      - 3000:3000
-#    build:
-#      context: ../
-#      dockerfile: Dockerfile
-#    volumes:
-#      - /usr/src/app/node_modules
-#      - /usr/src/app/.next
+  nextjs:
+    container_name: moon-base
+    ports:
+      - 3000:3000
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    volumes:
+      - /usr/src/app/node_modules
+      - /usr/src/app/.next
+    env_file:
+      - ../.env
+    links:
+      - mongo
   mongo:
     image: mongo
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: moon-base
     ports:
-      - '27017-27019:27017-27019'
+      - '27017:27017'
