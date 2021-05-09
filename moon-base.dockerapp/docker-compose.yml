@@ -3,6 +3,7 @@ version: "3.6"
 services:
   nextjs:
     container_name: moon-base
+    restart: always
     ports:
       - 3000:3000
     build:
